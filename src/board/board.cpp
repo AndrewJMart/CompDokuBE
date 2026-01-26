@@ -14,9 +14,49 @@ class Board {
             std::uniform_int_distribution<std::mt19937::result_type> dist9(1,9);
 
             // Fill Top Left
+            for (int row = 0; row < 3; row++) {
+                for (int col = 0; col < 3; col++) {
+                    board[row][col] = dist9(rng);
+                    while (!isValidPosition(row,col))
+                        board[row][col] = dist9(rng);
+                }
+            }
 
-            return;
+            // Fill Middle
 
+
+            // Fill Bottom Right
+
+        }
+
+        bool isValidPosition(int row, int col) {
+
+            int posValue = board[row][col];
+
+            // Check If Valid Along Rows
+            for (int col_check = 0; col_check < cols; col_check++){
+                if (posValue == board[row][col_check])
+                    return false;
+            }
+
+            // Check If Valid Along Cols
+            for (int row_check = 0; row_check < rows; row_check++){
+                    if (posValue == board[row_check][col])
+                        return false;
+            }
+
+            // Check If Valid Within SubMatrix
+            int row_start = (row / 3) * 3;
+            int col_start = (col / 3) * 3;
+
+            for (int row_idx = row_start; row_idx < (row_start + 3); row_idx++){
+                for (int col_idx = col_start; col_idx < (col_start + 3); col_idx ++){
+                    if (posValue == board[row_idx][col_idx])
+                        return false;
+                }
+            }
+
+            return true;
         }
 
         bool isValid() {
@@ -65,7 +105,6 @@ class Board {
             rows(9), cols(9), board(rows, std::vector<int>(cols))
         {
             generateBoard();
-            std::cout << isValid();
         }
 
         void printBoard() {
@@ -77,6 +116,7 @@ class Board {
                 }
                 std::cout << std::endl;
             }
+            return;
         }
 };
 
@@ -86,7 +126,6 @@ int main() {
     Board test_board;
 
     test_board.printBoard();
-
     return 1;
 }
 
