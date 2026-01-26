@@ -4,41 +4,40 @@
 
 class Board {
     private:
-        int grids;
         int rows;
-        int columns;
-        std::vector<std::vector<std::vector<int>>> board;
+        int cols;
+        std::vector<std::vector<int>> board;
 
         void generateBoard() {
             std::random_device dev;
             std::mt19937 rng(dev());
             std::uniform_int_distribution<std::mt19937::result_type> dist9(1,9);
 
-            int test = dist9(rng);
-            std::cout << test << std::endl;
-            board[0][0][0] = test;
+            // Fill Top Left
+            
+            return;
+
+        }
+
+        bool isValid() {
+            return true;
         }
 
     public:
-        Board(int grids_, int rows_, int columns_) : 
-            grids(grids_), rows(rows_), columns(columns_),
-            board(grids_, std::vector<std::vector<int>>(rows_, std::vector<int>(columns, 0)))
+        Board() : 
+            rows(9), cols(9), board(rows, std::vector<int>(cols))
         {
             generateBoard();
         }
 
         void printBoard() {
-            // Loop Through All Rows
-            for (auto row = 0; row < (rows); row++) {
-                // Loop Through Grid By Grid
-                for (auto grid = 0; grid < grids; grid++) {
-                    // Loop Through Column And Print
-                    for (auto column = 0; column < columns; column++) {
-                        std::cout << " " << board[grid][row][column] << " ";
-                    }
-                    std::cout << "|";
+            // Loop Through Rows
+            for (int row = 0; row < rows; row ++) {
+                // Loop Through Columns
+                for (int col = 0; col < cols; col++) {
+                    std::cout << board[row][col] << " | ";
                 }
-                std::cout << "\n";
+                std::cout << std::endl;
             }
         }
 };
@@ -46,7 +45,7 @@ class Board {
 
 int main() {
 
-    Board test_board(3,3,3);
+    Board test_board;
 
     test_board.printBoard();
 
