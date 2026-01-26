@@ -15,7 +15,6 @@ class Board {
 
             // Fill Top Left
 
-
             return;
 
         }
@@ -47,7 +46,7 @@ class Board {
                     // Check If Value Exists In Matrix
                     int row_location = row / 3;
                     int col_location = col / 3;
-                    int matrix_value = (row * 3) + col_space;
+                    int matrix_value = (row_location * 3) + col_location;
 
                     if (matrixchecker[matrix_value] & pos)
                         return false;
@@ -61,12 +60,12 @@ class Board {
             return true;
         }
 
-
     public:
         Board() : 
             rows(9), cols(9), board(rows, std::vector<int>(cols))
         {
             generateBoard();
+            std::cout << isValid();
         }
 
         void printBoard() {
