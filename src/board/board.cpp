@@ -14,8 +14,8 @@ class Board {
             std::uniform_int_distribution<std::mt19937::result_type> dist9(1,9);
 
             // Fill Top Left
-            for (int row = 0; row < 3; row++) {
-                for (int col = 0; col < 3; col++) {
+            for (int row = 0; row < rows; row++) {
+                for (int col = 0; col < cols; col++) {
                     board[row][col] = dist9(rng);
                     while (!isValidPosition(row,col))
                         board[row][col] = dist9(rng);
@@ -35,12 +35,18 @@ class Board {
 
             // Check If Valid Along Rows
             for (int col_check = 0; col_check < cols; col_check++){
+                if (col == col_check)
+                    continue;
+                
                 if (posValue == board[row][col_check])
                     return false;
             }
 
             // Check If Valid Along Cols
             for (int row_check = 0; row_check < rows; row_check++){
+                    if (row == row_check)
+                        continue;
+
                     if (posValue == board[row_check][col])
                         return false;
             }
@@ -51,6 +57,9 @@ class Board {
 
             for (int row_idx = row_start; row_idx < (row_start + 3); row_idx++){
                 for (int col_idx = col_start; col_idx < (col_start + 3); col_idx ++){
+                    if (row_idx == row && col_idx == col)
+                        continue;
+
                     if (posValue == board[row_idx][col_idx])
                         return false;
                 }
