@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <random>
+#include <algorithm>
 
 class Board {
     private:
@@ -8,9 +9,41 @@ class Board {
         int cols;
         std::vector<std::vector<int>> board;
 
-        void fillBoard(int col, int row, std::mt19937& rng) {
+        bool fillBoard(int row, int col, std::mt19937& rng) {
+            // Base Case: If Board Full & isValid Board Solved
+            if (row == rows && isValid())
+                return true;
 
+            // At This Point, Board Is Valid
+            // Try Different Values And Test Validitity
+            std::vector<int> sudoku_values = {1,2,3,4,5,6,7,8,9};
+            shuffle(sudoku_values.begin(), sudoku_values.end(), rng);
 
+            // Loop Through Shuffled Possible Values
+            for (int value : sudoku_values) {
+                board[row][col] = value;
+
+                int next_row = row;
+                int next_col = col;
+
+                // If Assigned Value Is Valid, Call Fill Board With Next Cell
+                if (isValidPosition(row, col)) {
+                    // If At End Of Row, Increment Row & Reset Column
+                    if ( (col + 1) == cols ) {
+                        next_row++;
+                        next_col = 0;
+                    }
+                    else {
+                        next_col++;
+                    }
+
+                    if (fillBoard(next_row, next_col, rng))
+                        return true;
+                }
+            }
+            // If Valid Value Not Possible. Backtrack
+            board[row][col] = 0;
+            return false;
         }
 
         void generateBoard() {
