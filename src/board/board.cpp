@@ -14,14 +14,53 @@ class Board {
             std::uniform_int_distribution<std::mt19937::result_type> dist9(1,9);
 
             // Fill Top Left
-            
+
+
             return;
 
         }
 
         bool isValid() {
+            // Create Vectors To Store Bit Representations
+            std::vector<int> rowchecker(rows);
+            std::vector<int> colchecker(cols);
+            std::vector<int> matrixchecker(9);
+
+            // Loop Through All Values
+            for (int row = 0; row < rows; row++) {
+                for (int col = 0; col < cols; col++) {
+                    // If Empty Continue
+                    if (board[row][col] == 0)
+                        continue;
+                    
+                    // Position Value In Bitmask
+                    int pos = 1 << (board[row][col] - 1);
+
+                    // Check If Exists In Row
+                    if (rowchecker[row] & pos)
+                        return false;
+
+                    // Check if Exists In Column
+                    if (colchecker[col] & pos)
+                        return false;
+
+                    // Check If Value Exists In Matrix
+                    int row_location = row / 3;
+                    int col_location = col / 3;
+                    int matrix_value = (row * 3) + col_space;
+
+                    if (matrixchecker[matrix_value] & pos)
+                        return false;
+
+                    // Mark Value As Seen
+                    rowchecker[row] |= pos;
+                    colchecker[col] |= pos;
+                    matrixchecker[matrix_value] |= pos;
+                }
+            }
             return true;
         }
+
 
     public:
         Board() : 
