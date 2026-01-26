@@ -14,8 +14,9 @@ class Board {
             std::mt19937 rng(dev());
             std::uniform_int_distribution<std::mt19937::result_type> dist9(1,9);
 
-            std::cout << dist9(rng);
-
+            int test = dist9(rng);
+            std::cout << test << std::endl;
+            board[0][0][0] = test;
         }
 
     public:
