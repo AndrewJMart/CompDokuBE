@@ -8,29 +8,19 @@ class Board {
         int cols;
         std::vector<std::vector<int>> board;
 
-        void generateBoard() {
-            std::random_device dev;
-            std::mt19937 rng(dev());
-            std::uniform_int_distribution<std::mt19937::result_type> dist9(1,9);
+        void fillBoard(int col, int row, std::mt19937& rng) {
 
-            // Fill Top Left
-            for (int row = 0; row < rows; row++) {
-                for (int col = 0; col < cols; col++) {
-                    board[row][col] = dist9(rng);
-                    while (!isValidPosition(row,col))
-                        board[row][col] = dist9(rng);
-                }
-            }
-
-            // Fill Middle
-
-
-            // Fill Bottom Right
 
         }
 
-        bool isValidPosition(int row, int col) {
+        void generateBoard() {
+            std::random_device dev;
+            std::mt19937 rng(dev());
 
+            fillBoard(0, 0, rng);
+        }
+
+        bool isValidPosition(int row, int col) {
             int posValue = board[row][col];
 
             // Check If Valid Along Rows
@@ -64,7 +54,6 @@ class Board {
                         return false;
                 }
             }
-
             return true;
         }
 
@@ -125,7 +114,6 @@ class Board {
                 }
                 std::cout << std::endl;
             }
-            return;
         }
 };
 
