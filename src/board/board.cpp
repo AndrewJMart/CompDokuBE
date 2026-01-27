@@ -7,7 +7,7 @@
 
 bool Board::fillBoard(int row, int col, std::mt19937& rng) {
     // Base Case: If Board Full & isValid Board Solved
-    if (row == rows && isValid())
+    if (row == rows)
         return true;
 
     // At This Point, Board Is Valid
@@ -23,7 +23,7 @@ bool Board::fillBoard(int row, int col, std::mt19937& rng) {
         int next_col = col;
 
         // If Assigned Value Is Valid, Call Fill Board With Next Cell
-        if (isValidPosition(row, col)) {
+        if (isValidPosition(board, row, col)) {
             // If At End Of Row, Increment Row & Reset Column
             if ( (col + 1) == cols ) {
                 next_row++;
@@ -49,7 +49,7 @@ void Board::generateBoard() {
     fillBoard(0, 0, rng);
 }
 
-bool Board::isValidPosition(int row, int col) {
+bool Board::isValidPosition(std::vector<std::vector<int>>& board, int row, int col) {
     int posValue = board[row][col];
 
     // Check If Valid Along Rows
