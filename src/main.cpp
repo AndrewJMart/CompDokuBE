@@ -1,10 +1,12 @@
 #include <iostream>
-#include <crow.h>
 #include <fstream>
 #include <nlohmann/json.hpp>
 
-using json = nlohmann::json;
-using namespace std;
+#include <crow.h>
+
+// Import Sudoku Board Class
+//#include "board/board.h"
+//
 
 int main(){
 
@@ -12,22 +14,16 @@ int main(){
 
     std::cout << "Reading Backend Config";
 
-    crow::SimpleApp CompDokuBE;
+    //Board test_board;
+    //test_board.printBoard();
+
+    crow::SimpleApp app;
 
     // Default Endpoint
-    CROW_ROUTE(CompDokuBE, "/")([](){
+    CROW_ROUTE(app, "/")([](){
         return "Hello world";
     });
 
-    CROW_ROUTE(CompDokuBE, "/random_board")([](){
-        crow::json::wvalue x({{"message", "Hello, World!"}});
-        x["Message2"] = "hello again";
-
-        return x;
-    });
-
-
-
     // Single Thread App
-    CompDokuBE.port(18080).run();
+    app.port(18080).multithreaded().run();
 }
