@@ -97,7 +97,7 @@ bool Board::isValid() {
         for (int col = 0; col < cols; col++) {
             // If Empty Continue
             if (board[row][col] == 0)
-                continue;
+                return false;
             
             // Position Value In Bitmask
             int pos = 1 << (board[row][col] - 1);
