@@ -5,8 +5,7 @@
 #include <crow.h>
 
 // Import Sudoku Board Class
-//#include "board/board.h"
-//
+#include "board/board.h"
 
 int main(){
 
@@ -14,8 +13,8 @@ int main(){
 
     std::cout << "Reading Backend Config";
 
-    //Board test_board;
-    //test_board.printBoard();
+    Board test_board;
+    test_board.printBoard();
 
     crow::SimpleApp app;
 
