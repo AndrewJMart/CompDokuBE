@@ -1,13 +1,16 @@
 target: main
 
 main: main.o board.o
-	g++ main.o board.o -o main
+	g++ objs/main.o objs/board.o -o main
 
-main.o:
-	g++ -c src/main.cpp -lpthread
+main.o: objs
+	g++ -c src/main.cpp -lpthread -o objs/main.o
 
-board.o:
-	g++ -c src/board/board.cpp
+board.o: objs
+	g++ -c src/board/board.cpp -o objs/board.o
+
+objs:
+	mkdir objs
 
 clean:
-	rm *.o
+	rm -r objs

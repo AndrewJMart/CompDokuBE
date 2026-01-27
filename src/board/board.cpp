@@ -128,9 +128,12 @@ bool Board::isValid() {
 }
 
 Board::Board(): 
-    rows(9), cols(9), board(rows, std::vector<int>(cols))
+    rows(9), cols(9), 
+    board(rows, std::vector<int>(cols)), 
+    solveboard(rows, std::vector<int>(cols))
     {
         generateBoard();
+        solveboard = board;
     }
 
 void Board::printBoard() {
