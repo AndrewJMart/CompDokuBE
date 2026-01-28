@@ -3,6 +3,7 @@
 #include <vector>
 #include <random>
 #include <algorithm>
+#include <iostream>
 
 class Board {
     private:
@@ -13,14 +14,18 @@ class Board {
         std::vector<std::vector<int>> solveboard;
 
         // Private Methods
+        
+        // Generation Funcs
         bool fillBoard(int row, int col, std::mt19937& rng);
         void generateBoard();
 
+        // Solver Funcs
 	    void uniqueBoard(std::vector<std::vector<int>>& board, int& count);
-	    void findNextEmpty(std::vector<std::vector<int>>& board, int& next_row, int& next_col);
 
+        // Util Funcs
         bool isValidPosition(std::vector<std::vector<int>>& board, int row, int col);
         bool isValid();
+	    void findNextEmpty(std::vector<std::vector<int>>& board, int& next_row, int& next_col);
 
     public:
         // Constructor

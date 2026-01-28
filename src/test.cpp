@@ -3,7 +3,7 @@
 #include "board/board.h"
 
 int main(){
-    std::cout << "Hello World" std::endl;
+    std::cout << "Hello World" << std::endl;
 
     Board test_board;
     test_board.printBoard();

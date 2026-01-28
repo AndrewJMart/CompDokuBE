@@ -20,3 +20,5 @@ objs:
 
 clean:
 	rm -r objs
+	rm main
+	rm test
