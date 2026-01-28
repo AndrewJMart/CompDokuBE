@@ -16,10 +16,10 @@ class Board {
         bool fillBoard(int row, int col, std::mt19937& rng);
         void generateBoard();
 
-	void uniqueBoard(std::vector<std::vector<int>>& board, int& count);
-	void findNextEmpty(std::vector<std::vector<int>>& board, int& next_row, int& next_col);
+	    void uniqueBoard(std::vector<std::vector<int>>& board, int& count);
+	    void findNextEmpty(std::vector<std::vector<int>>& board, int& next_row, int& next_col);
 
-        bool isValidPosition(int row, int col);
+        bool isValidPosition(std::vector<std::vector<int>>& board, int row, int col);
         bool isValid();
 
     public:
