@@ -18,9 +18,8 @@ class Board {
         // Generation Funcs
         bool fillBoard(int row, int col, std::mt19937& rng);
         void generateBoard();
-
-        // Solver Funcs
 	    void uniqueBoard(std::vector<std::vector<int>>& board, int& count);
+        void logicalSolver(std::vector<std::vector<int>>& board);
 
         // Util Funcs
         bool isValidPosition(std::vector<std::vector<int>>& board, int row, int col);
