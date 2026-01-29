@@ -19,12 +19,13 @@ class Board {
         bool fillBoard(int row, int col, std::mt19937& rng);
         void generateBoard();
 	    void uniqueBoard(std::vector<std::vector<int>>& board, int& count);
-        void logicalSolver(std::vector<std::vector<int>>& board);
+        bool logicalSolver(std::vector<std::vector<int>> board);
 
         // Util Funcs
         bool isValidPosition(std::vector<std::vector<int>>& board, int row, int col);
         bool isValid();
 	    void findNextEmpty(std::vector<std::vector<int>>& board, int& next_row, int& next_col);
+        void createCandidateSet(std::vector<std::vector<int>>& board, std::vector<std::vector<int>>& candidate_set);
 
     public:
         // Constructor
