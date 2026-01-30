@@ -22,7 +22,7 @@ class Board {
         bool logicalSolver(std::vector<std::vector<int>> board);
 
         // Logical Solver Funcs
-        bool nakedSingles(std::vector<std::vector<int>>& board);
+        bool nakedSingles(std::vector<std::vector<int>>& board, std::vector<std::vector<int>>& candidate_set);
 
         // Util Funcs
         bool isValidPosition(std::vector<std::vector<int>>& board, int row, int col);
