@@ -1,5 +1,14 @@
 #include "board.h"
 
+Board::Board(): 
+    rows(9), cols(9), 
+    board(rows, std::vector<int>(cols)), 
+    solveboard(rows, std::vector<int>(cols))
+    {
+        generateBoard();
+        solveboard = board;
+    }
+
 bool Board::fillBoard(int row, int col, std::mt19937& rng) {
     // Base Case: If Board Full & isValid Board Solved
     if (row == rows)
@@ -44,100 +53,59 @@ void Board::generateBoard() {
     fillBoard(0, 0, rng);
 }
 
-bool Board::isValidPosition(std::vector<std::vector<int>>& board, int row, int col) {
-    int posValue = board[row][col];
+void Board::uniqueBoard(std::vector<std::vector<int>>& board, int& count) {
+    // Passed In: Current State Of Board, counter for solutions
+    // Pass In By Reference So State Carries Over During Recursion
 
-    // Check If Valid Along Rows
-    for (int col_check = 0; col_check < cols; col_check++){
-        if (col == col_check)
-            continue;
+    // Base Case: If Count > 1, Board Is Not Unique, Break Recursion & Return
+    if (count > 1)
+        return;
+
+    int next_row = -1;
+    int next_col = -1;
+
+    findNextEmpty(board, next_row, next_col);
+
+    // If No Next Cell, Board Is Solved
+    if (next_row == -1) {
+        count++;
+        return;
+    }
+
+    // If Empty Cell, Iterate Through Possible Values
+    std::vector<int> possibleValues = {1,2,3,4,5,6,7,8,9};
+    
+    for (int value : possibleValues) {
+        board[next_row][next_col] = value;
         
-        if (posValue == board[row][col_check])
-            return false;
+        // If Valid Placement, Continue Along Board Filled At Spot
+        if (isValidPosition(board, next_row, next_col))
+            uniqueBoard(board, count);
+        
+        // If Multiple Solutions Backtrack And Prune Early
+        if (count > 1)
+            board[next_row][next_col] = 0;
+            return;
     }
 
-    // Check If Valid Along Cols
-    for (int row_check = 0; row_check < rows; row_check++){
-            if (row == row_check)
-                continue;
-
-            if (posValue == board[row_check][col])
-                return false;
-    }
-
-    // Check If Valid Within SubMatrix
-    int row_start = (row / 3) * 3;
-    int col_start = (col / 3) * 3;
-
-    for (int row_idx = row_start; row_idx < (row_start + 3); row_idx++){
-        for (int col_idx = col_start; col_idx < (col_start + 3); col_idx ++){
-            if (row_idx == row && col_idx == col)
-                continue;
-
-            if (posValue == board[row_idx][col_idx])
-                return false;
-        }
-    }
-    return true;
+    // Backtrack If Necessary
+    board[next_row][next_col] = 0;
+    return;
 }
 
-bool Board::isValid() {
-    // Create Vectors To Store Bit Representations
-    std::vector<int> rowchecker(rows);
-    std::vector<int> colchecker(cols);
-    std::vector<int> matrixchecker(9);
+bool Board::logicalSolver(std::vector<std::vector<int>> board){
+    // Given A Board, Iteratively Apply Human Solver Techniques Until Board
+    // Is Solved Or Not
 
-    // Loop Through All Values
-    for (int row = 0; row < rows; row++) {
-        for (int col = 0; col < cols; col++) {
-            // If Empty Continue
-            if (board[row][col] == 0)
-                return false;
-            
-            // Position Value In Bitmask
-            int pos = 1 << (board[row][col] - 1);
+    // Create Candidate Set For Original Board
+    std::vector<std::vector<int>> candidate_set(rows, std::vector<int>(cols, 0x1FF));
+    createCandidateSet(board, candidate_set);
 
-            // Check If Exists In Row
-            if (rowchecker[row] & pos)
-                return false;
-
-            // Check if Exists In Column
-            if (colchecker[col] & pos)
-                return false;
-
-            // Check If Value Exists In Matrix
-            int row_location = row / 3;
-            int col_location = col / 3;
-            int matrix_value = (row_location * 3) + col_location;
-
-            if (matrixchecker[matrix_value] & pos)
-                return false;
-
-            // Mark Value As Seen
-            rowchecker[row] |= pos;
-            colchecker[col] |= pos;
-            matrixchecker[matrix_value] |= pos;
-        }
+    // Return Case: If At End Of Progress, Board Is Solved, Return True
+    if (isValid(board)) {
+        return true;
     }
-    return true;
-}
-
-Board::Board(): 
-    rows(9), cols(9), 
-    board(rows, std::vector<int>(cols)), 
-    solveboard(rows, std::vector<int>(cols))
-    {
-        generateBoard();
-        solveboard = board;
-    }
-
-void Board::printBoard() {
-    // Loop Through Rows
-    for (int row = 0; row < rows; row ++) {
-        // Loop Through Columns
-        for (int col = 0; col < cols; col++) {
-            std::cout << board[row][col] << " | ";
-        }
-        std::cout << std::endl;
+    else {
+        return false;
     }
 }
