@@ -26,7 +26,7 @@ class Board {
 
         // Util Funcs
         bool isValidPosition(std::vector<std::vector<int>>& board, int row, int col);
-        bool isValid();
+        bool isValid(std::vector<std::vector<int>>& board);
 	    void findNextEmpty(std::vector<std::vector<int>>& board, int& next_row, int& next_col);
         void createCandidateSet(std::vector<std::vector<int>>& board, std::vector<std::vector<int>>& candidate_set);
 

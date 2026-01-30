@@ -12,8 +12,17 @@ main.o: objs
 test.o: objs
 	g++ -c src/test.cpp -o objs/test.o
 
-board.o: objs
-	g++ -c src/board/board.cpp -o objs/board.o
+board.o: generation.o logical.o utils.o
+	g++ -r objs/generation.o objs/logical.o objs/utils.o -o objs/board.o
+
+generation.o: objs
+	g++ -c src/board/generation.cpp -o objs/generation.o
+
+logical.o: objs
+	g++ -c src/board/logical.cpp -o objs/logical.o
+
+utils.o: objs
+	g++ -c src/board/utils.cpp -o objs/utils.o
 
 objs:
 	mkdir objs

@@ -37,7 +37,7 @@ bool Board::isValidPosition(std::vector<std::vector<int>>& board, int row, int c
     return true;
 }
 
-bool Board::isValid() {
+bool Board::isValid(std::vector<std::vector<int>>& board) {
     // Create Vectors To Store Bit Representations
     std::vector<int> rowchecker(rows);
     std::vector<int> colchecker(cols);
@@ -91,7 +91,7 @@ void Board::findNextEmpty(std::vector<std::vector<int>>& board, int& next_row, i
     }
 }
 
-void Board::createCandidateSet(board, candidate_set) {
+void Board::createCandidateSet(std::vector<std::vector<int>>& board, std::vector<std::vector<int>>& candidate_set) {
     // Given A Board, Create a Candidate Set
 
     // Create Masks For Rows, Cols, Matrices (9x9 Board Assumption)
