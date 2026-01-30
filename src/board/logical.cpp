@@ -6,7 +6,7 @@ bool Board::logicalSolver(std::vector<std::vector<int>> board){
     // Is Solved Or Not
 
     // Create Candidate Set For Original Board
-    std::vector<std::vector<int>> candidate_set(rows, std::vector<int>(cols, 0));
+    std::vector<std::vector<int>> candidate_set(rows, std::vector<int>(cols, 0x1FF));
     createCandidateSet(board, candidate_set);
 
     // Return Case: If At End Of Progress, Board Is Solved, Return True
@@ -47,14 +47,25 @@ void createCandidateSet(board, candidate_set) {
 
             matrix_mask[matrix_value] |= pos;
         }
-
-    // Iterate Through List & Update Candidate Set
-
-
     }
 
-    // Iterate Through Boa
-
-
-    return;
+    // Iterate Through List & Update Candidate Set
+    for (int row = 0; row < rows; row++) {
+        for (int col = 0; col < cols; col++) {
+            // If Cell Is Given, Set Candidate Set To Just That Number
+            if (board[row][col] != 0) {
+                int pos = 1 << (board[row][col] - 1);
+                // Flag Value As Only Valid Candidate
+                candidate_set[row][col] &= 0;
+                candidate_set[row][col] |= pos;
+            }
+            // If Cell Is Not Given, Take Complement Of Each Mask
+            int row_location = row / 3;
+            int col_location = col / 3;
+            int matrix_value = (row_location * 3) + col_location;
+            int used = col_mask[col] | row_mask[row] | matrix_mask[matrix_value];
+            
+            candidate_set[row][col] &= (~used) & 0x1FF;
+        }
+    }
 }

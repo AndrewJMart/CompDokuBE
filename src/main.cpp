@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <nlohmann/json.hpp>
-
 #include <crow.h>
 
 // Import Sudoku Board Class
