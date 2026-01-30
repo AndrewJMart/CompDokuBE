@@ -1,6 +1,6 @@
 #include "board.h"
 
-bool nakedSingles(std::vector<std::vector<int>>& board, std::vector<std::vector<int>>& candidate_set) {
+bool Board::nakedSingles(std::vector<std::vector<int>>& board, std::vector<std::vector<int>>& candidate_set) {
     // Naked Singles:
     // Apply When Cell Only Has One Candidate Left! Simply Place Single Candidate Into Board
     
