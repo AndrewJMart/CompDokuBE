@@ -11,7 +11,8 @@ bool Board::nakedSingles(std::vector<std::vector<int>>& board, std::vector<std::
                 continue;
 
             // Check If Unsolved Cell Has Only One Candidate
-            if ((candidate_set[row][col] & (candidate_set[row][col] - 1)) == 0) {
+            if ( candidate_set[row][col] != 0 &&
+                (candidate_set[row][col] & (candidate_set[row][col] - 1)) == 0) {
 
                 //std::cout << "Row : " << row << " " << "Col : " << col << std::endl;
                 int candidate_value = __builtin_ctz(candidate_set[row][col]) + 1;
@@ -112,4 +113,5 @@ bool Board::hiddenSingles(std::vector<std::vector<int>>& board, std::vector<std:
     }
 
     return progress;
+
 }

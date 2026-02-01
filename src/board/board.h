@@ -22,7 +22,7 @@ class Board {
         void createPlayableBoard(std::vector<std::vector<int>> board);
 
         // Logical Solver Funcs
-        bool logicalSolver(std::vector<std::vector<int>> board);
+        bool logicalSolver(std::vector<std::vector<int>>& board);
         bool nakedSingles(std::vector<std::vector<int>>& board, std::vector<std::vector<int>>& candidate_set);
         bool hiddenSingles(std::vector<std::vector<int>>& board, std::vector<std::vector<int>>& candidate_set);
 

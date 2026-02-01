@@ -72,50 +72,51 @@ void Board::createPlayableBoard(std::vector<std::vector<int>> board) {
     std::shuffle(cells.begin(), cells.end(), rng);
 
     // Iterate Through Shuffled Cells
-    bool progress = true;
-
-    while (progress) {
-        for (auto cell : cells) {
-            int row = cell.first;
-            int col = cell.second;
-            unsigned int microsecond = 1000000;
+    for (auto cell : cells) {
+        int row = cell.first;
+        int col = cell.second;
+        //unsigned int microsecond = 1000000;
                 
-            int original_value = board[row][col];
+        int original_value = board[row][col];
+
+        if (original_value == 0)
+            continue;
+
     
-            std::cout << "Original Value: " << original_value << std::endl;
+        //std::cout << "Original Value: " << original_value << std::endl;
 
-            board[row][col] = 0;
+        board[row][col] = 0;
 
-            // Check If Board Yields uniqueBoard
-            auto unique_board = board;
+        // Check If Board Yields uniqueBoard
+        auto unique_board = board;
             
-            std::cout << "Board Passed Into Unique Solver" << std::endl;
-            printBoard(unique_board);
+        //std::cout << "Board Passed Into Unique Solver" << std::endl;
+        //printBoard(unique_board);
            
-            int num_solutions = 0;
-            uniqueBoard(unique_board, num_solutions);
+        int num_solutions = 0;
+        uniqueBoard(unique_board, num_solutions);
 
-            usleep(10 * microsecond);
+        //usleep(10 * microsecond);
 
-            std::cout << "Number Of Solutions: " << num_solutions << std::endl;
+        //std::cout << "Number Of Solutions: " << num_solutions << std::endl;
 
-            // If Board Has Multiple Solutions, Pass Onto Next Cell
-            if (num_solutions != 1) {
-                board[row][col] = original_value;
-                continue;
-            }
-
-            std::cout << "Board Passed Into Logical Solver" << std::endl;
-            printBoard(board);
-
-            usleep(10 * microsecond);
-
-            // logicalSolver Copies Board,
-            progress = logicalSolver(board);
-
-            if (!progress)
-                board[row][col] = original_value;
+        // If Board Has Multiple Solutions, Pass Onto Next Cell
+        if (num_solutions != 1) {
+            board[row][col] = original_value;
+            continue;
         }
+
+        //std::cout << "Board Passed Into Logical Solver" << std::endl;
+        //printBoard(board);
+
+        //usleep(10 * microsecond);
+
+        // logicalSolver Copies Board,
+        auto test_board = board;
+        bool solvable = logicalSolver(test_board);
+
+        if (!solvable)
+            board[row][col] = original_value;
     }
 
     playable_board = board;
@@ -181,7 +182,7 @@ void Board::uniqueBoard(std::vector<std::vector<int>>& board, int& count) {
     return;
 }
 
-bool Board::logicalSolver(std::vector<std::vector<int>> board){
+bool Board::logicalSolver(std::vector<std::vector<int>>& board){
     // Given A Board, Iteratively Apply Human Solver Techniques Until Board
     // Is Solved Or Not
 
