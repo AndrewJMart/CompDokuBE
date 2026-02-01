@@ -167,8 +167,6 @@ void Board::uniqueBoard(std::vector<std::vector<int>>& board, int& count) {
 
             //int microsecond = 1000000;
             //usleep(3 * microsecond);
-        } else {
-            continue;
         }
 
         // If Multiple Solutions Backtrack And Prune Early
