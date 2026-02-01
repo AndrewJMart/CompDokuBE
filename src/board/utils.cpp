@@ -1,4 +1,5 @@
 #include "board.h"
+#include <unistd.h>
 
 bool Board::isValidPosition(std::vector<std::vector<int>>& board, int row, int col) {
     int posValue = board[row][col];
@@ -131,6 +132,7 @@ void Board::createCandidateSet(std::vector<std::vector<int>>& board, std::vector
                 // Flag Value As Only Valid Candidate
                 candidate_set[row][col] &= 0;
                 candidate_set[row][col] |= pos;
+                continue;
             }
             // If Cell Is Not Given, Take Complement Of Each Mask
             int row_location = row / 3;
@@ -139,17 +141,27 @@ void Board::createCandidateSet(std::vector<std::vector<int>>& board, std::vector
             int used = col_mask[col] | row_mask[row] | matrix_mask[matrix_value];
             
             candidate_set[row][col] &= (~used) & 0x1FF;
+
+            //for (int i = 0; i < 9; i++) {
+            //    if (candidate_set[row][col] & (1 << i)) {
+            //        std::cout << " Candidate Row: " << row + 1 << " Col: " << col + 1 << std::endl;
+            //        std::cout << "Candidate: " << i + 1 << " Set" << std::endl;
+            //        int microsecond = 1000000;
+            //        usleep(5 * microsecond);
+            //    }
+            //}
         }
     }
 }
 
-void Board::printBoard() {
+void Board::printBoard(std::vector<std::vector<int>> print_board) {
     // Loop Through Rows
     for (int row = 0; row < rows; row ++) {
         // Loop Through Columns
         for (int col = 0; col < cols; col++) {
-            std::cout << board[row][col] << " | ";
+            std::cout << print_board[row][col] << " | ";
         }
         std::cout << std::endl;
     }
+    std::cout << std::endl;
 }

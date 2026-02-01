@@ -28,6 +28,6 @@ objs:
 	mkdir objs
 
 clean:
-	rm -r objs
-	rm main
-	rm test
+	rm -rf objs
+	rm -f main
+	rm -f test

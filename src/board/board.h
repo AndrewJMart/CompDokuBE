@@ -11,7 +11,7 @@ class Board {
         int cols;
         int rows;
         std::vector<std::vector<int>> board;
-        std::vector<std::vector<int>> solveboard;
+        std::vector<std::vector<int>> playable_board;
 
         // Private Methods
         
@@ -19,10 +19,12 @@ class Board {
         bool fillBoard(int row, int col, std::mt19937& rng);
         void generateBoard();
 	    void uniqueBoard(std::vector<std::vector<int>>& board, int& count);
-        bool logicalSolver(std::vector<std::vector<int>> board);
+        void createPlayableBoard(std::vector<std::vector<int>> board);
 
         // Logical Solver Funcs
+        bool logicalSolver(std::vector<std::vector<int>> board);
         bool nakedSingles(std::vector<std::vector<int>>& board, std::vector<std::vector<int>>& candidate_set);
+        bool hiddenSingles(std::vector<std::vector<int>>& board, std::vector<std::vector<int>>& candidate_set);
 
         // Util Funcs
         bool isValidPosition(std::vector<std::vector<int>>& board, int row, int col);
@@ -36,5 +38,5 @@ class Board {
         Board();
 
         // Public Methods
-        void printBoard();
+        void printBoard(std::vector<std::vector<int>> print_board);
 };

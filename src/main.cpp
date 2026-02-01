@@ -13,7 +13,6 @@ int main(){
     std::cout << "Reading Backend Config";
 
     Board test_board;
-    test_board.printBoard();
 
     crow::SimpleApp app;
 

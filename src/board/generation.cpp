@@ -1,13 +1,23 @@
 #include "board.h"
+#include<unistd.h>
 
 Board::Board(): 
     rows(9), cols(9), 
     board(rows, std::vector<int>(cols)), 
-    solveboard(rows, std::vector<int>(cols))
+    playable_board(rows, std::vector<int>(cols))
     {
         generateBoard();
-        solveboard = board;
+        printBoard(board);
+        createPlayableBoard(board);
+        printBoard(playable_board);
     }
+
+void Board::generateBoard() {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+
+    fillBoard(0, 0, rng);
+}
 
 bool Board::fillBoard(int row, int col, std::mt19937& rng) {
     // Base Case: If Board Full & isValid Board Solved
@@ -46,11 +56,70 @@ bool Board::fillBoard(int row, int col, std::mt19937& rng) {
     return false;
 }
 
-void Board::generateBoard() {
+void Board::createPlayableBoard(std::vector<std::vector<int>> board) {
+    // Given A Fully Solved Board, Iteratively Remove Pieces
     std::random_device dev;
     std::mt19937 rng(dev());
 
-    fillBoard(0, 0, rng);
+    std::vector<std::pair<int, int>> cells;
+
+    for (int row = 0; row < rows; row++) {
+        for (int col = 0; col < cols; col++) {
+            cells.emplace_back(row, col);
+        }
+    }
+
+    std::shuffle(cells.begin(), cells.end(), rng);
+
+    // Iterate Through Shuffled Cells
+    bool progress = true;
+
+    while (progress) {
+        for (auto cell : cells) {
+            int row = cell.first;
+            int col = cell.second;
+            unsigned int microsecond = 1000000;
+                
+            int original_value = board[row][col];
+    
+            std::cout << "Original Value: " << original_value << std::endl;
+
+            board[row][col] = 0;
+
+            // Check If Board Yields uniqueBoard
+            auto unique_board = board;
+            
+            std::cout << "Board Passed Into Unique Solver" << std::endl;
+            printBoard(unique_board);
+           
+            int num_solutions = 0;
+            uniqueBoard(unique_board, num_solutions);
+
+            usleep(10 * microsecond);
+
+            std::cout << "Number Of Solutions: " << num_solutions << std::endl;
+
+            // If Board Has Multiple Solutions, Pass Onto Next Cell
+            if (num_solutions != 1) {
+                board[row][col] = original_value;
+                continue;
+            }
+
+            std::cout << "Board Passed Into Logical Solver" << std::endl;
+            printBoard(board);
+
+            usleep(10 * microsecond);
+
+            // logicalSolver Copies Board,
+            progress = logicalSolver(board);
+
+            if (!progress)
+                board[row][col] = original_value;
+        }
+    }
+
+    playable_board = board;
+    return;
 }
 
 void Board::uniqueBoard(std::vector<std::vector<int>>& board, int& count) {
@@ -66,8 +135,11 @@ void Board::uniqueBoard(std::vector<std::vector<int>>& board, int& count) {
 
     findNextEmpty(board, next_row, next_col);
 
+    //std::cout << "Next Empty: " << next_row << " " << next_col << std::endl;
+
     // If No Next Cell, Board Is Solved
     if (next_row == -1) {
+        //std::cout << "Board Solved" << std::endl;
         count++;
         return;
     }
@@ -79,13 +151,31 @@ void Board::uniqueBoard(std::vector<std::vector<int>>& board, int& count) {
         board[next_row][next_col] = value;
         
         // If Valid Placement, Continue Along Board Filled At Spot
-        if (isValidPosition(board, next_row, next_col))
+        bool valid_position = isValidPosition(board, next_row, next_col);
+        //std::cout << "Value: " << value << " Is Valid: " << valid_position << std::endl;
+
+        //std::cout << "Board Passed In To Valid Position" << std::endl;
+        //printBoard(board);
+
+        //int microsecond = 1000000;
+        //usleep(microsecond);
+
+        if (valid_position) {
+            //std::cout << "Valid Position: " << next_row << " " << next_col << std::endl;
+            //std::cout << "Valid Number: " << board[next_col][next_col] << std::endl;
             uniqueBoard(board, count);
-        
+
+            //int microsecond = 1000000;
+            //usleep(3 * microsecond);
+        } else {
+            continue;
+        }
+
         // If Multiple Solutions Backtrack And Prune Early
-        if (count > 1)
+        if (count > 1) {
             board[next_row][next_col] = 0;
             return;
+        }
     }
 
     // Backtrack If Necessary
@@ -99,7 +189,13 @@ bool Board::logicalSolver(std::vector<std::vector<int>> board){
 
     // Create Candidate Set For Original Board
     std::vector<std::vector<int>> candidate_set(rows, std::vector<int>(cols, 0x1FF));
-    createCandidateSet(board, candidate_set);
+
+    bool progress = true;
+
+    while(progress) {
+        createCandidateSet(board, candidate_set);
+        progress = nakedSingles(board, candidate_set);
+    }
 
     // Return Case: If At End Of Progress, Board Is Solved, Return True
     if (isValid(board)) {
