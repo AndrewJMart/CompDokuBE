@@ -71,6 +71,9 @@ void Board::createPlayableBoard(std::vector<std::vector<int>> board) {
 
     std::shuffle(cells.begin(), cells.end(), rng);
 
+    int max_missing = 10;
+    int missing_count = 0;
+
     // Iterate Through Shuffled Cells
     for (auto cell : cells) {
         int row = cell.first;
@@ -117,6 +120,11 @@ void Board::createPlayableBoard(std::vector<std::vector<int>> board) {
 
         if (!solvable)
             board[row][col] = original_value;
+
+        // At This Point Solvable And Unique Add To Count
+        missing_count++;
+        if (missing_count == max_missing)
+            break;
     }
 
     playable_board = board;
