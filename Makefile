@@ -1,33 +1,95 @@
-target: main
+# Compiler settings
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra
+LDFLAGS = -lpthread
 
-main: main.o board.o
-	g++ objs/main.o objs/board.o -o main
+# Directories
+OBJ_DIR = objs
+SRC_DIR = src
 
-test: test.o board.o
-	g++ objs/test.o objs/board.o -o test
+# Object files
+OBJS = $(OBJ_DIR)/Board.o \
+       $(OBJ_DIR)/CandidateTracker.o \
+       $(OBJ_DIR)/Validator.o \
+       $(OBJ_DIR)/Generator.o \
+       $(OBJ_DIR)/generate.o \
+       $(OBJ_DIR)/playable.o \
+       $(OBJ_DIR)/solvers.o \
+       $(OBJ_DIR)/utils.o
 
-main.o: objs
-	g++ -c src/main.cpp -lpthread -o objs/main.o
+# Targets
+.PHONY: all clean test
 
-test.o: objs
-	g++ -c src/test.cpp -o objs/test.o
+all: main
 
-board.o: generation.o logical.o utils.o
-	g++ -r objs/generation.o objs/logical.o objs/utils.o -o objs/board.o
+main: $(OBJ_DIR)/main.o $(OBJS)
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
-generation.o: objs
-	g++ -c src/board/generation.cpp -o objs/generation.o
+test: $(OBJ_DIR)/test.o $(OBJS)
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
-logical.o: objs
-	g++ -c src/board/logical.cpp -o objs/logical.o
+# Main executable
+$(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-utils.o: objs
-	g++ -c src/board/utils.cpp -o objs/utils.o
+# Test executable
+$(OBJ_DIR)/test.o: $(SRC_DIR)/test.cpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-objs:
-	mkdir objs
+# Board class
+$(OBJ_DIR)/Board.o: $(SRC_DIR)/Board/Board.cpp $(SRC_DIR)/Board/Board.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# CandidateTracker
+$(OBJ_DIR)/CandidateTracker.o: $(SRC_DIR)/CandidateTracker/CandidateTracker.cpp \
+                                $(SRC_DIR)/CandidateTracker/CandidateTracker.h \
+                                $(SRC_DIR)/Board/Board.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Validator
+$(OBJ_DIR)/Validator.o: $(SRC_DIR)/Validator/Validator.cpp \
+                        $(SRC_DIR)/Validator/Validator.h \
+                        $(SRC_DIR)/Board/Board.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Generator
+$(OBJ_DIR)/Generator.o: $(SRC_DIR)/Generator/Generator.cpp \
+                        $(SRC_DIR)/Generator/Generator.h \
+                        $(SRC_DIR)/Board/Board.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Generator Methods - Generate
+$(OBJ_DIR)/generate.o: $(SRC_DIR)/Generator/generate.cpp \
+                       $(SRC_DIR)/Generator/Generator.h \
+                       $(SRC_DIR)/Board/Board.h \
+                       $(SRC_DIR)/Validator/Validator.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Generator Methods - Playable
+$(OBJ_DIR)/playable.o: $(SRC_DIR)/Generator/playable.cpp \
+                       $(SRC_DIR)/Generator/Generator.h \
+                       $(SRC_DIR)/Board/Board.h \
+                       $(SRC_DIR)/CandidateTracker/CandidateTracker.h \
+                       $(SRC_DIR)/Validator/Validator.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Generator Methods - Solvers
+$(OBJ_DIR)/solvers.o: $(SRC_DIR)/Generator/solvers.cpp \
+                      $(SRC_DIR)/Generator/Generator.h \
+                      $(SRC_DIR)/CandidateTracker/CandidateTracker.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Generator Methods - Utils
+$(OBJ_DIR)/utils.o: $(SRC_DIR)/Generator/utils.cpp \
+                    $(SRC_DIR)/Generator/Generator.h \
+                    $(SRC_DIR)/Board/Board.h \
+                    $(SRC_DIR)/Validator/Validator.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Create Obj Dir
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
 clean:
-	rm -rf objs
-	rm -f main
-	rm -f test
+	rm -rf $(OBJ_DIR)
+	rm -f main test

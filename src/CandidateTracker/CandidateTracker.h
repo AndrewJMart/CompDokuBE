@@ -1,12 +1,16 @@
+// src/CandidateTracker/CandidateTracker.h
+
 #pragma once
 
 #include <vector>
 
+#include "../Board/Board.h"
+
 class CandidateTracker {
     private:
         // Private Members
-        std::vector<std::vector<int>> candidateMask;
         const Board& candidateBoard; // Store Reference To Board For Updating Purposes
+        std::vector<std::vector<int>> candidateMask;
         
         // Private Methods
         void updateCandidateMask();
@@ -18,5 +22,5 @@ class CandidateTracker {
 
         // Public Methods
         void refresh();
-        int getCellCandidates(int row, int col);
+        int getCellCandidates(int row, int col) const;
 };
