@@ -11,9 +11,6 @@ class Board {
         int cols;
         int rows;
         std::vector<std::vector<int>> board;
-        std::vector<std::vector<int>> playable_board;
-
-        // Private Methods
         
         // Generation Funcs
         bool fillBoard(int row, int col, std::mt19937& rng);
@@ -38,5 +35,7 @@ class Board {
         Board();
 
         // Public Methods
-        void printBoard(std::vector<std::vector<int>> print_board);
+        int getCols();
+        int getRows();
+        int getCell(int col, int row);
 };
