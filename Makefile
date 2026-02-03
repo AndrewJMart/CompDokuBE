@@ -11,6 +11,7 @@ SRC_DIR = src
 OBJS = $(OBJ_DIR)/Board.o \
        $(OBJ_DIR)/CandidateTracker.o \
        $(OBJ_DIR)/Validator.o \
+       $(OBJ_DIR)/Solver.o \
        $(OBJ_DIR)/Generator.o \
        $(OBJ_DIR)/generate.o \
        $(OBJ_DIR)/playable.o \
@@ -28,15 +29,15 @@ main: $(OBJ_DIR)/main.o $(OBJS)
 test: $(OBJ_DIR)/test.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
-# Main executable
+# Main
 $(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Test executable
+# Test
 $(OBJ_DIR)/test.o: $(SRC_DIR)/test.cpp | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Board class
+# Board
 $(OBJ_DIR)/Board.o: $(SRC_DIR)/Board/Board.cpp $(SRC_DIR)/Board/Board.h | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
@@ -50,6 +51,18 @@ $(OBJ_DIR)/CandidateTracker.o: $(SRC_DIR)/CandidateTracker/CandidateTracker.cpp 
 $(OBJ_DIR)/Validator.o: $(SRC_DIR)/Validator/Validator.cpp \
                         $(SRC_DIR)/Validator/Validator.h \
                         $(SRC_DIR)/Board/Board.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Solver
+$(OBJ_DIR)/Solver.o: $(SRC_DIR)/Solver/Solver.cpp \
+                        $(SRC_DIR)/Solver/Solver.h \
+                        $(SRC_DIR)/Board/Board.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Solver Methods - Solvers
+$(OBJ_DIR)/solvers.o: $(SRC_DIR)/Solver/solvers.cpp \
+                       $(SRC_DIR)/Board/Board.h \
+                       $(SRC_DIR)/CandidateTracker/CandidateTracker.h | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Generator
@@ -70,13 +83,8 @@ $(OBJ_DIR)/playable.o: $(SRC_DIR)/Generator/playable.cpp \
                        $(SRC_DIR)/Generator/Generator.h \
                        $(SRC_DIR)/Board/Board.h \
                        $(SRC_DIR)/CandidateTracker/CandidateTracker.h \
+                       $(SRC_DIR)/Solver/Solver.h \
                        $(SRC_DIR)/Validator/Validator.h | $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-# Generator Methods - Solvers
-$(OBJ_DIR)/solvers.o: $(SRC_DIR)/Generator/solvers.cpp \
-                      $(SRC_DIR)/Generator/Generator.h \
-                      $(SRC_DIR)/CandidateTracker/CandidateTracker.h | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Generator Methods - Utils

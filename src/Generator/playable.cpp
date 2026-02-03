@@ -1,6 +1,7 @@
 // src/Generator/playable.cpp
 
 #include "Generator.h"
+#include "../Solver/Solver.h"
 #include "../CandidateTracker/CandidateTracker.h"
 #include "../Validator/Validator.h"
 
@@ -53,9 +54,8 @@ void Generator::createPlayableBoard() {
 
         // logicalSolver Copies Board
         Board test_board = board;
-        bool solvable = logicalSolver(test_board);
 
-        if (!solvable) {
+        if (!Solver::logicalSolver(test_board)) {
             board.setCell(row, col, original_value);
             continue;
         }
@@ -68,25 +68,4 @@ void Generator::createPlayableBoard() {
 
     playableBoard = board;
     return;
-}
-
-bool Generator::logicalSolver(Board& board){
-    // Given A Board, Iteratively Apply Human Solver Techniques Until Board
-    // Is Solved Or Not
-
-    // Create Candidate Set For Original Board
-    bool progress = true;
-
-    while(progress) {
-        CandidateTracker candidates(board);
-        progress = nakedSingles(board, candidates);
-    }
-
-    // Return Case: If At End Of Progress, Board Is Solved, Return True
-    if (Validator::isValid(board)) {
-        return true;
-    }
-    else {
-        return false;
-    }
 }

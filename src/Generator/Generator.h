@@ -18,10 +18,6 @@ class Generator {
         void generateBoard();
         void createPlayableBoard();
 
-        // Solver Funcs
-        bool logicalSolver(Board& board);
-        bool nakedSingles(Board& board, CandidateTracker candidates);
-
         // Util Funcs
         std::mt19937 createRandomNumberGenerator();
 	    void findNextEmpty(const Board& board, int& next_row, int& next_col);

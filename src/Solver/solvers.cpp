@@ -1,9 +1,10 @@
-// src/Generator/solvers.cpp
+// src/Solver/solvers.cpp
 
-#include "Generator.h"
+#include "Solver.h"
+#include "../Board/Board.h"
 #include "../CandidateTracker/CandidateTracker.h"
 
-bool Generator::nakedSingles(Board& board, CandidateTracker candidates) {
+bool Solver::nakedSingles(Board& board, CandidateTracker candidates) {
     // Naked Singles:
     // Apply When Cell Only Has One Candidate Left! Simply Place Single Candidate Into Board
 
