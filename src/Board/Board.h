@@ -16,6 +16,7 @@ class Board {
         Board(int row, int col);
 
         // Public Methods
+        std::vector<std::vector<int>> getBoard() const;
         int getCols() const;
         int getRows() const;
         int getCell(int row, int col) const;

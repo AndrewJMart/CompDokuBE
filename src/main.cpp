@@ -4,7 +4,9 @@
 #include <crow.h>
 
 // Import Sudoku Board Class
-#include "board/board.h"
+#include "Board/Board.h"
+#include "Validator/Validator.h"
+#include "Generator/Generator.h"
 
 int main(){
 
@@ -12,13 +14,25 @@ int main(){
 
     std::cout << "Reading Backend Config";
 
-    Board test_board;
-
     crow::SimpleApp app;
 
     // Default Endpoint
     CROW_ROUTE(app, "/")([](){
         return "Hello world";
+    });
+
+    CROW_ROUTE(app, "/generateBoard")([](){
+
+        Generator gen(9,9);
+
+        Board playableBoard = gen.getPlayableBoard();
+
+        crow::json::wvalue returnBoard;
+        returnBoard["Board"] = playableBoard.getBoard();
+
+        Validator::printBoard(playableBoard);
+
+        return returnBoard;
     });
 
     // Single Thread App

@@ -19,6 +19,10 @@ int Board::getCell(int row, int col) const {
     return board[row][col];
 }
 
+std::vector<std::vector<int>> Board::getBoard() const {
+    return board;
+}
+
 void Board::setCell(int row, int col, int value) {
     board[row][col] = value;
 }
