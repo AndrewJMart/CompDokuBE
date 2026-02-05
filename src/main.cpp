@@ -31,12 +31,19 @@ int main(){
           users.erase(&conn);
       })
       .onmessage([&](crow::websocket::connection& /*conn*/, const std::string& data, bool is_binary) {
-          std::lock_guard<std::mutex> _(mtx);
-          for (auto u : users)
-              if (is_binary)
-                  u->send_binary(data);
-              else
-                  u->send_text(data);
+          CROW_LOG_INFO << "Websocket Info Sent: " << data;
+
+          // Read Data Into JSON
+          auto messageJSON = crow::json::load(data);
+
+          CROW_LOG_INFO << "ID" << messageJSON["ID"];
+
+        //   std::lock_guard<std::mutex> _(mtx);
+        //   for (auto u : users)
+        //       if (is_binary)
+        //           u->send_binary(data);
+        //       else
+        //           u->send_text(data);
       });
 
     // Default Endpoint
