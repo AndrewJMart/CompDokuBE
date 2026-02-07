@@ -10,23 +10,9 @@
 #include "Board/Board.h"
 #include "Validator/Validator.h"
 #include "Generator/Generator.h"
-
-struct Match {
-    // Store Pointers To Player Connections
-    crow::websocket::connection* p1;
-    crow::websocket::connection* p2;
-
-    // Store Board For Each Player
-    Board* p1Board;
-    Board* p2Board;
-};
+#include "Match/Match.h"
 
 int main(){
-
-    std::cout << "Initializing Backend";
-
-    std::cout << "Reading Backend Config";
-
     crow::SimpleApp app;
     
     // Concurrency Lock
@@ -52,7 +38,6 @@ int main(){
           if (playerQueue.empty()) {
             playerQueue.push(&conn);
           } else {
-            CROW_LOG_INFO << "Two People On Queue";
             // Grab First Player Off Of Queue
             crow::websocket::connection* otherPlayer = playerQueue.front();
             playerQueue.pop();
@@ -66,16 +51,11 @@ int main(){
             // Create Board
             Generator gen(9,9);
             
-            Board p1Board = gen.getPlayableBoard();
+            Board starterBoard = gen.getPlayableBoard();
 
             Board p2Board = p1Board;
 
-            Match playerMatch;
-            
-            playerMatch.p1 = &conn;
-            playerMatch.p2 = otherPlayer;
-            playerMatch.p1Board = &p1Board;
-            playerMatch.p2Board = &p2Board; 
+            Match playerMatch = new Match(&conn, otherPlayer, starterBoard, starterBoard);
 
             uniqueIDToMatch[matchIDStr] = &playerMatch;
 
