@@ -1,13 +1,25 @@
 #include <iostream>
+#include <string>
 #include <fstream>
 #include <crow.h>
-#include <unordered_set>
+#include <queue>
+#include <unordered_map>
 #include <mutex>
 
 // Import Sudoku Board Class
 #include "Board/Board.h"
 #include "Validator/Validator.h"
 #include "Generator/Generator.h"
+
+struct Match {
+    // Store Pointers To Player Connections
+    crow::websocket::connection* p1;
+    crow::websocket::connection* p2;
+
+    // Store Board For Each Player
+    Board* p1Board;
+    Board* p2Board;
+};
 
 int main(){
 
@@ -16,34 +28,101 @@ int main(){
     std::cout << "Reading Backend Config";
 
     crow::SimpleApp app;
+    
+    // Concurrency Lock
     std::mutex mtx;
-    std::unordered_set<crow::websocket::connection*> users;
 
-    CROW_WEBSOCKET_ROUTE(app, "/ws")
+    // Hashmap: Connection -> Unique Match ID
+    std::unordered_map<crow::websocket::connection*, std::string> playerToMatch;
+
+    // Hashmap: Unique ID -> Match
+    std::unordered_map<std::string, Match*> uniqueIDToMatch;
+
+    // Queue: Store Waiting Users
+    std::queue<crow::websocket::connection*> playerQueue;
+
+
+    int matchID = 0;
+
+    CROW_WEBSOCKET_ROUTE(app, "/compete")
       .onopen([&](crow::websocket::connection& conn) {
           CROW_LOG_INFO << "new websocket connection from " << conn.get_remote_ip();
           std::lock_guard<std::mutex> _(mtx);
-          users.insert(&conn);
+
+          if (playerQueue.empty()) {
+            playerQueue.push(&conn);
+          } else {
+            CROW_LOG_INFO << "Two People On Queue";
+            // Grab First Player Off Of Queue
+            crow::websocket::connection* otherPlayer = playerQueue.front();
+            playerQueue.pop();
+
+            // Create Match Between Two Players
+            std::string matchIDStr = std::to_string(matchID);
+
+            playerToMatch[&conn] = matchIDStr;
+            playerToMatch[otherPlayer] = matchIDStr;
+
+            // Create Board
+            Generator gen(9,9);
+            
+            Board p1Board = gen.getPlayableBoard();
+
+            Board p2Board = p1Board;
+
+            Match playerMatch;
+            
+            playerMatch.p1 = &conn;
+            playerMatch.p2 = otherPlayer;
+            playerMatch.p1Board = &p1Board;
+            playerMatch.p2Board = &p2Board; 
+
+            uniqueIDToMatch[matchIDStr] = &playerMatch;
+
+            // Send Boards To Players
+            crow::json::wvalue p1ReturnJSON;
+            p1ReturnJSON["type"] = "MATCH_START"; 
+            p1ReturnJSON["board"] = p1Board.getBoard();
+
+
+            crow::json::wvalue p2ReturnJSON;
+            p2ReturnJSON["type"] = "MATCH_START"; 
+            p2ReturnJSON["board"] = p2Board.getBoard();
+
+            conn.send_text(p1ReturnJSON.dump());
+            otherPlayer->send_text(p2ReturnJSON.dump());
+          }
       })
       .onclose([&](crow::websocket::connection& conn, const std::string& reason, uint16_t) {
           CROW_LOG_INFO << "websocket connection closed: " << reason;
           std::lock_guard<std::mutex> _(mtx);
-          users.erase(&conn);
       })
-      .onmessage([&](crow::websocket::connection& /*conn*/, const std::string& data, bool is_binary) {
+      .onmessage([&](crow::websocket::connection& conn, const std::string& data, bool is_binary) {
           CROW_LOG_INFO << "Websocket Info Sent: " << data;
 
           // Read Data Into JSON
           auto messageJSON = crow::json::load(data);
 
-          CROW_LOG_INFO << "ID" << messageJSON["ID"];
+          if (messageJSON["type"] == "MOVE") {
+            std::string matchIDStr = playerToMatch[&conn];
+            Match* playerMatch = uniqueIDToMatch[matchIDStr];
 
-        //   std::lock_guard<std::mutex> _(mtx);
-        //   for (auto u : users)
-        //       if (is_binary)
-        //           u->send_binary(data);
-        //       else
-        //           u->send_text(data);
+            if (&conn == playerMatch->p1) {
+                playerMatch->p1Board->setCell(
+                    messageJSON["row"].i(), 
+                    messageJSON["col"].i(),
+                    messageJSON["value"].i()
+                );
+            } else {
+                playerMatch->p2Board->setCell(
+                    messageJSON["row"].i(), 
+                    messageJSON["col"].i(),
+                    messageJSON["value"].i()
+                );
+            }
+          }
+
+
       });
 
     // Default Endpoint
