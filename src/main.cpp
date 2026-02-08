@@ -30,7 +30,7 @@ int main(){
 
     int matchID = 0;
 
-    CROW_WEBSOCKET_ROUTE(app, "/compete")
+    CROW_WEBSOCKET_ROUTE(app, "/ws/compete")
       .onopen([&](crow::websocket::connection& conn) {
           CROW_LOG_INFO << "new websocket connection from " << conn.get_remote_ip();
           std::lock_guard<std::mutex> _(mtx);
@@ -155,7 +155,7 @@ int main(){
         return "Hello world";
     });
 
-    CROW_ROUTE(app, "/generateBoard")([](){
+    CROW_ROUTE(app, "/api/generateBoard")([](){
 
         Generator gen(9,9);
 
