@@ -11,6 +11,7 @@
 #include "Validator/Validator.h"
 #include "Generator/Generator.h"
 #include "Match/Match.h"
+#include "BackendUtil/BackendUtil.h"
 
 int main(){
     crow::SimpleApp app;

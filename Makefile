@@ -17,6 +17,7 @@ OBJS = $(OBJ_DIR)/Board.o \
        $(OBJ_DIR)/generate.o \
        $(OBJ_DIR)/playable.o \
        $(OBJ_DIR)/solvers.o \
+       $(OBJ_DIR)/backendutils.o \
        $(OBJ_DIR)/utils.o
 
 # Targets
@@ -97,6 +98,10 @@ $(OBJ_DIR)/utils.o: $(SRC_DIR)/Generator/utils.cpp \
                     $(SRC_DIR)/Generator/Generator.h \
                     $(SRC_DIR)/Board/Board.h \
                     $(SRC_DIR)/Validator/Validator.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/backendutils.o: $(SRC_DIR)/BackendUtils/BackendUtils.cpp \
+                           $(SRC_DIR)/BackendUtils/BackendUtils.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Create Obj Dir
