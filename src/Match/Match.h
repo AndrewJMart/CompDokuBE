@@ -16,7 +16,7 @@ struct Match {
         // Store Board By Value
         Board p1Board;
         Board p2Board;
-    
+        
         Match(
             crow::websocket::connection* _p1, crow::websocket::connection* _p2, Board& b1, Board& b2 
         );

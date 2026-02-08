@@ -170,5 +170,5 @@ int main(){
     });
     
     // Single Thread App
-    app.port(18080).multithreaded().run();
+    app.port(18080).bindaddr("127.0.0.1").multithreaded().run();
 }
