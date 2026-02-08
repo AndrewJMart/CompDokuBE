@@ -9,6 +9,7 @@ SRC_DIR = src
 
 # Object files
 OBJS = $(OBJ_DIR)/Board.o \
+       $(OBJ_DIR)/Match.o \
        $(OBJ_DIR)/CandidateTracker.o \
        $(OBJ_DIR)/Validator.o \
        $(OBJ_DIR)/Solver.o \
@@ -39,6 +40,10 @@ $(OBJ_DIR)/test.o: $(SRC_DIR)/test.cpp | $(OBJ_DIR)
 
 # Board
 $(OBJ_DIR)/Board.o: $(SRC_DIR)/Board/Board.cpp $(SRC_DIR)/Board/Board.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Match
+$(OBJ_DIR)/Match.o: $(SRC_DIR)/Match/Match.cpp $(SRC_DIR)/Match/Match.h | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # CandidateTracker

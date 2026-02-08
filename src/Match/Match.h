@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include <crow>
 #include <vector>
+#include <crow.h>
 
-#include "Board/Board.h"
+#include "../Board/Board.h"
 
 struct Match {
     public:
@@ -18,6 +18,6 @@ struct Match {
         Board p2Board;
     
         Match(
-            crow::websocket::connection* _p1, crow::websocket::connection* _p1, const Board& b1, const Board& b2 
-        )
-}
+            crow::websocket::connection* _p1, crow::websocket::connection* _p2, Board& b1, Board& b2 
+        );
+};

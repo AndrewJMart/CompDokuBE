@@ -53,21 +53,19 @@ int main(){
             
             Board starterBoard = gen.getPlayableBoard();
 
-            Board p2Board = p1Board;
+            Match* playerMatch = new Match(&conn, otherPlayer, starterBoard, starterBoard);
 
-            Match playerMatch = new Match(&conn, otherPlayer, starterBoard, starterBoard);
-
-            uniqueIDToMatch[matchIDStr] = &playerMatch;
+            uniqueIDToMatch[matchIDStr] = playerMatch;
 
             // Send Boards To Players
             crow::json::wvalue p1ReturnJSON;
             p1ReturnJSON["type"] = "MATCH_START"; 
-            p1ReturnJSON["board"] = p1Board.getBoard();
+            p1ReturnJSON["board"] = starterBoard.getBoard();
 
 
             crow::json::wvalue p2ReturnJSON;
             p2ReturnJSON["type"] = "MATCH_START"; 
-            p2ReturnJSON["board"] = p2Board.getBoard();
+            p2ReturnJSON["board"] = starterBoard.getBoard();
 
             conn.send_text(p1ReturnJSON.dump());
             otherPlayer->send_text(p2ReturnJSON.dump());
@@ -83,26 +81,73 @@ int main(){
           // Read Data Into JSON
           auto messageJSON = crow::json::load(data);
 
+          std::string matchIDStr = playerToMatch[&conn];
+          Match* playerMatch = uniqueIDToMatch[matchIDStr];
+
+
           if (messageJSON["type"] == "MOVE") {
-            std::string matchIDStr = playerToMatch[&conn];
-            Match* playerMatch = uniqueIDToMatch[matchIDStr];
+            crow::json::wvalue moveJSON;
+            moveJSON["type"] = "MOVE_RESULT";
+            moveJSON["row"] = messageJSON["row"];
+            moveJSON["col"] = messageJSON["col"];
 
             if (&conn == playerMatch->p1) {
-                playerMatch->p1Board->setCell(
+                playerMatch->p1Board.setCell(
                     messageJSON["row"].i(), 
                     messageJSON["col"].i(),
                     messageJSON["value"].i()
                 );
+
+                moveJSON["grid"] = playerMatch->p1Board.getBoard();
+
             } else {
-                playerMatch->p2Board->setCell(
+                playerMatch->p2Board.setCell(
                     messageJSON["row"].i(), 
                     messageJSON["col"].i(),
                     messageJSON["value"].i()
                 );
+                moveJSON["grid"] = playerMatch->p2Board.getBoard();
             }
+            conn.send_text(moveJSON.dump());
           }
 
+          if (messageJSON["type"] == "SOLVED") {
+            crow::json::wvalue solvedJSON;
+            solvedJSON["type"] = "GAME_OVER";
 
+            if (&conn == playerMatch->p1) {                
+                if (!Validator::isValid(playerMatch->p1Board)) {
+                    solvedJSON["type"] = "SOVLED_INVALID";
+                    playerMatch->p1->send_text(solvedJSON.dump());
+                    return;
+                }
+
+                // If Valid, Send Winner To P1, Loser To P2
+                solvedJSON["winner"] = "you";
+
+                playerMatch->p1->send_text(solvedJSON.dump());
+
+                solvedJSON["winner"] = "no";
+
+                playerMatch->p2->send_text(solvedJSON.dump());
+
+            } else {
+                if (!Validator::isValid(playerMatch->p2Board)) {
+                    solvedJSON["type"] = "SOVLED_INVALID";
+                    playerMatch->p2->send_text(solvedJSON.dump());
+                    return;
+                }
+
+                // If Valid, Send Winner To P2, Loser To P1
+                solvedJSON["winner"] = "you";
+
+                playerMatch->p2->send_text(solvedJSON.dump());
+
+                solvedJSON["winner"] = "no";
+
+                playerMatch->p1->send_text(solvedJSON.dump());
+            }
+          }
       });
 
     // Default Endpoint
