@@ -161,13 +161,13 @@ int main(){
         Generator gen(9,9);
 
         Board playableBoard = gen.getPlayableBoard();
+        Board solvedBoard = gen.getSolvedBoard();
 
-        crow::json::wvalue returnBoard;
-        returnBoard["Board"] = playableBoard.getBoard();
+        crow::json::wvalue sendBoards;
+        returnBoard["playableBoard"] = playableBoard.getBoard();
+        returnBoard["solvedBoard"] = solvedBoard.getBoard();
 
-        Validator::printBoard(playableBoard);
-
-        return returnBoard;
+        return sendBoards;
     });
     
     // Single Thread App
