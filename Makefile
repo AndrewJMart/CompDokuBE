@@ -9,7 +9,6 @@ SRC_DIR = src
 
 # Object files
 OBJS = $(OBJ_DIR)/Board.o \
-       $(OBJ_DIR)/Match.o \
        $(OBJ_DIR)/CandidateTracker.o \
        $(OBJ_DIR)/Validator.o \
        $(OBJ_DIR)/Solver.o \
@@ -17,7 +16,6 @@ OBJS = $(OBJ_DIR)/Board.o \
        $(OBJ_DIR)/generate.o \
        $(OBJ_DIR)/playable.o \
        $(OBJ_DIR)/solvers.o \
-       $(OBJ_DIR)/backendutils.o \
        $(OBJ_DIR)/utils.o
 
 # Targets
@@ -41,10 +39,6 @@ $(OBJ_DIR)/test.o: $(SRC_DIR)/test.cpp | $(OBJ_DIR)
 
 # Board
 $(OBJ_DIR)/Board.o: $(SRC_DIR)/Board/Board.cpp $(SRC_DIR)/Board/Board.h | $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-# Match
-$(OBJ_DIR)/Match.o: $(SRC_DIR)/Match/Match.cpp $(SRC_DIR)/Match/Match.h | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # CandidateTracker
@@ -98,10 +92,6 @@ $(OBJ_DIR)/utils.o: $(SRC_DIR)/Generator/utils.cpp \
                     $(SRC_DIR)/Generator/Generator.h \
                     $(SRC_DIR)/Board/Board.h \
                     $(SRC_DIR)/Validator/Validator.h | $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(OBJ_DIR)/backendutils.o: $(SRC_DIR)/BackendUtils/BackendUtils.cpp \
-                           $(SRC_DIR)/BackendUtils/BackendUtils.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Create Obj Dir
