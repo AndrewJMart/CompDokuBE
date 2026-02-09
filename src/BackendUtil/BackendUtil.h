@@ -2,4 +2,7 @@
 
 #pragma once
 
-// Backend Utility Functions
+#include <crow.h>
+#include <queue>
+
+void removeConnection(std::queue<crow::websocket::connection*>& playerQueue, const crow::websocket::connection* playerConnection);

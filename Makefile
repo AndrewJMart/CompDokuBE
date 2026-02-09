@@ -17,7 +17,8 @@ OBJS = $(OBJ_DIR)/Board.o \
        $(OBJ_DIR)/playable.o \
        $(OBJ_DIR)/solvers.o \
        $(OBJ_DIR)/utils.o \
-       $(OBJ_DIR)/Match.o
+       $(OBJ_DIR)/Match.o \
+       $(OBJ_DIR)/BackendUtil.o
 
 # Targets
 .PHONY: all clean test
@@ -98,6 +99,12 @@ $(OBJ_DIR)/utils.o: $(SRC_DIR)/Generator/utils.cpp \
 # Match
 $(OBJ_DIR)/Match.o: $(SRC_DIR)/Match/Match.cpp \
                     $(SRC_DIR)/Match/Match.h \
+                    $(SRC_DIR)/Board/Board.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# BackendUtil
+$(OBJ_DIR)/BackendUtil.o: $(SRC_DIR)/BackendUtil/BackendUtil.cpp \
+                    $(SRC_DIR)/BackendUtil/BackendUtil.h \
                     $(SRC_DIR)/Board/Board.h | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
