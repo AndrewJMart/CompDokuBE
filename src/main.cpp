@@ -163,11 +163,11 @@ int main(){
         Board playableBoard = gen.getPlayableBoard();
         Board solvedBoard = gen.getSolvedBoard();
 
-        crow::json::wvalue sendBoards;
-        returnBoard["playableBoard"] = playableBoard.getBoard();
-        returnBoard["solvedBoard"] = solvedBoard.getBoard();
+        crow::json::wvalue returnBoards;
+        returnBoards["playableBoard"] = playableBoard.getBoard();
+        returnBoards["solvedBoard"] = solvedBoard.getBoard();
 
-        return sendBoards;
+        return returnBoards;
     });
     
     // Single Thread App
