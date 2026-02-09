@@ -16,7 +16,8 @@ OBJS = $(OBJ_DIR)/Board.o \
        $(OBJ_DIR)/generate.o \
        $(OBJ_DIR)/playable.o \
        $(OBJ_DIR)/solvers.o \
-       $(OBJ_DIR)/utils.o
+       $(OBJ_DIR)/utils.o \
+       $(OBJ_DIR)/Match.o
 
 # Targets
 .PHONY: all clean test
@@ -92,6 +93,12 @@ $(OBJ_DIR)/utils.o: $(SRC_DIR)/Generator/utils.cpp \
                     $(SRC_DIR)/Generator/Generator.h \
                     $(SRC_DIR)/Board/Board.h \
                     $(SRC_DIR)/Validator/Validator.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Match
+$(OBJ_DIR)/Match.o: $(SRC_DIR)/Match/Match.cpp \
+                    $(SRC_DIR)/Match/Match.h \
+                    $(SRC_DIR)/Board/Board.h | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Create Obj Dir
