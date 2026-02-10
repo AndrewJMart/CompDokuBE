@@ -2,6 +2,7 @@
 
 #include "BackendUtil.h"
 #include "../Match/Match.h"
+#include "../Validator/Validator.h"
 
 #include <iostream>
 
@@ -25,42 +26,100 @@ void cleanUpGame(
     std::unordered_map<crow::websocket::connection*, std::string>& playerToMatch,
     std::unordered_map<std::string, Match*>& uniqueIDToMatch
 ) {
-    // If Player Match Already Cleaned, Return
-    if (playerToMatch.find(playerConnection) == playerToMatch.end()) {
-        CROW_LOG_INFO << "Check If Cleaned" << playerConnection->get_remote_ip();
-        return;
-    } 
+    auto it = playerToMatch.find(playerConnection);
+    if (it != playerToMatch.end()) {
+        std::string matchID = it->second;
+        auto matchIt = uniqueIDToMatch.find(matchID);
+        if (matchIt != uniqueIDToMatch.end()) {
+            Match* playerMatch = matchIt->second;
 
-    CROW_LOG_INFO << "Check MatchID" << playerConnection->get_remote_ip();
+            // Notify Other Player
+            crow::websocket::connection* otherPlayer = (playerConnection == playerMatch->p1) ? playerMatch->p2 : playerMatch->p1;
+            if (otherPlayer) {
+                crow::json::wvalue json;
+                json["type"] = "PLAYER_LEFT";
+                otherPlayer->send_text(json.dump());
+            }
+
+            // Clean Up Hashmaps
+            playerToMatch.erase(playerMatch->p1);
+            playerToMatch.erase(playerMatch->p2);
+            uniqueIDToMatch.erase(matchID);
+
+            delete playerMatch; // Free Match Memory
+        }
+    }
+}
+
+void handleMove(crow::websocket::connection* player,
+                const crow::json::rvalue& messageJSON,
+                std::unordered_map<crow::websocket::connection*, std::string>& playerToMatch,
+                std::unordered_map<std::string, Match*>& uniqueIDToMatch) {
     
-    // Get MatchID Affiliated With Player
-    std::string playerMatchID = playerToMatch[playerConnection];
+    auto it = playerToMatch.find(player);
+    if (it == playerToMatch.end()) return;
 
-    CROW_LOG_INFO << "Check PlayerMatch" << playerConnection->get_remote_ip();
+    std::string matchID = it->second;
+    auto matchIt = uniqueIDToMatch.find(matchID);
+    if (matchIt == uniqueIDToMatch.end()) return;
 
-    // Get Match Object Player Is In
-    Match* playerMatch = uniqueIDToMatch[playerMatchID];
+    Match* playerMatch = matchIt->second;
 
+    crow::json::wvalue moveJSON;
+    moveJSON["type"] = "MOVE_RESULT";
+    moveJSON["row"] = messageJSON["row"];
+    moveJSON["col"] = messageJSON["col"];
 
-    CROW_LOG_INFO << "Check Match" << playerConnection->get_remote_ip();
-
-    crow::json::wvalue ReturnJSON;
-    ReturnJSON["type"] = "PLAYER_LEFT";
-
-    crow::websocket::connection* returnPlayer;
-
-    if (playerConnection != playerMatch->p1) {
-        returnPlayer = playerMatch->p1; 
+    if (player == playerMatch->p1) {
+        playerMatch->p1Board.setCell(
+            messageJSON["row"].i(),
+            messageJSON["col"].i(),
+            messageJSON["value"].i()
+        );
+        moveJSON["grid"] = playerMatch->p1Board.getBoard();
     } else {
-        returnPlayer = playerMatch->p2;
+        playerMatch->p2Board.setCell(
+            messageJSON["row"].i(),
+            messageJSON["col"].i(),
+            messageJSON["value"].i()
+        );
+        moveJSON["grid"] = playerMatch->p2Board.getBoard();
     }
 
-    returnPlayer->send_text(ReturnJSON.dump());
+    player->send_text(moveJSON.dump());
+}
 
-    // Remove From Hashmaps
-    playerToMatch.erase(playerConnection);
-    playerToMatch.erase(returnPlayer);
-    uniqueIDToMatch.erase(playerMatchID);
+void handleSolved(crow::websocket::connection* player,
+                  const crow::json::rvalue& messageJSON,
+                  std::unordered_map<crow::websocket::connection*, std::string>& playerToMatch,
+                  std::unordered_map<std::string, Match*>& uniqueIDToMatch) {
 
-    return;
+    auto it = playerToMatch.find(player);
+    if (it == playerToMatch.end()) return;
+
+    std::string matchID = it->second;
+    auto matchIt = uniqueIDToMatch.find(matchID);
+    if (matchIt == uniqueIDToMatch.end()) return;
+
+    Match* playerMatch = matchIt->second;
+
+    crow::json::wvalue solvedJSON;
+    solvedJSON["type"] = "GAME_OVER";
+
+    crow::websocket::connection* winnerConn = (player == playerMatch->p1) ? playerMatch->p1 : playerMatch->p2;
+    crow::websocket::connection* loserConn  = (player == playerMatch->p1) ? playerMatch->p2 : playerMatch->p1;
+
+    auto& winnerBoard = (player == playerMatch->p1) ? playerMatch->p1Board : playerMatch->p2Board;
+
+    if (!Validator::isValid(winnerBoard)) {
+        solvedJSON["type"] = "SOLVED_INVALID";
+        winnerConn->send_text(solvedJSON.dump());
+        return;
+    }
+
+    solvedJSON["winner"] = "you";
+    winnerConn->send_text(solvedJSON.dump());
+
+    solvedJSON["winner"] = "no";
+    loserConn->send_text(solvedJSON.dump());
 }
