@@ -77,9 +77,11 @@ int main(){
           std::lock_guard<std::mutex> _(mtx);
 
           // Remove Connection If in Queue
+          CROW_LOG_INFO << "Remove Connection From Queue" << conn.get_remote_ip();
           removeConnection(playerQueue, &conn);
 
           // Clean Up Game
+          CROW_LOG_INFO << "Remove Connection From Match" << conn.get_remote_ip();
           cleanUpGame(&conn, playerToMatch, uniqueIDToMatch);
 
       })
