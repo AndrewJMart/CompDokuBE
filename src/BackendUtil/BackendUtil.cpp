@@ -90,7 +90,6 @@ void handleMove(crow::websocket::connection* player,
 }
 
 void handleSolved(crow::websocket::connection* player,
-                  const crow::json::rvalue& messageJSON,
                   std::unordered_map<crow::websocket::connection*, std::string>& playerToMatch,
                   std::unordered_map<std::string, Match*>& uniqueIDToMatch) {
 
