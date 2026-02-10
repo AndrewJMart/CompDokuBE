@@ -10,6 +10,6 @@
 void removeConnection(std::queue<crow::websocket::connection*>& playerQueue, const crow::websocket::connection* playerConnection);
 
 void cleanUpGame(crow::websocket::connection* playerConnection,
-    std::unordered_map<crow::websocket::connection*, std::string> playerToMatch,
-    std::unordered_map<std::string, Match*> uniqueIDToMatch
+    std::unordered_map<crow::websocket::connection*, std::string>& playerToMatch,
+    std::unordered_map<std::string, Match*>& uniqueIDToMatch
 );

@@ -22,8 +22,8 @@ void removeConnection(std::queue<crow::websocket::connection*>& playerQueue, con
 
 void cleanUpGame(
     crow::websocket::connection* playerConnection,
-    std::unordered_map<crow::websocket::connection*, std::string> playerToMatch,
-    std::unordered_map<std::string, Match*> uniqueIDToMatch
+    std::unordered_map<crow::websocket::connection*, std::string>& playerToMatch,
+    std::unordered_map<std::string, Match*>& uniqueIDToMatch
 ) {
     // If Player Match Already Cleaned, Return
     if (playerToMatch.find(playerConnection) == playerToMatch.end()) {
