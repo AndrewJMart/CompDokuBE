@@ -79,6 +79,9 @@ int main(){
           // Remove Connection If in Queue
           removeConnection(playerQueue, &conn);
 
+          // Clean Up Game
+          cleanUpGame(&conn, playerToMatch, uniqueIDToMatch);
+
       })
       .onmessage([&](crow::websocket::connection& conn, const std::string& data, bool is_binary) {
           CROW_LOG_INFO << "Websocket Info Sent: " << data;
