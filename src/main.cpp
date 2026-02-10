@@ -33,8 +33,8 @@ int main(){
 
     CROW_WEBSOCKET_ROUTE(app, "/ws/compete")
       .onopen([&](crow::websocket::connection& conn) {
-          CROW_LOG_INFO << "new websocket connection from " << conn.get_remote_ip();
           std::lock_guard<std::mutex> _(mtx);
+          CROW_LOG_INFO << "new websocket connection from " << " " << conn.get_remote_ip();
 
           if (playerQueue.empty()) {
             playerQueue.push(&conn);
@@ -86,6 +86,7 @@ int main(){
 
       })
       .onmessage([&](crow::websocket::connection& conn, const std::string& data, bool is_binary) {
+          std::lock_guard<std::mutex> _(mtx);
           CROW_LOG_INFO << "Websocket Info Sent: " << data;
 
           // Read Data Into JSON
