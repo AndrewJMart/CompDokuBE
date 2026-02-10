@@ -82,7 +82,7 @@ int main() {
         if (messageJSON["type"] == "MOVE") {
             handleMove(&conn, messageJSON, playerToMatch, uniqueIDToMatch);
         } else if (messageJSON["type"] == "SOLVED") {
-            handleSolved(&conn, messageJSON, playerToMatch, uniqueIDToMatch);
+            handleSolved(&conn, playerToMatch, uniqueIDToMatch);
         }
     });
 
