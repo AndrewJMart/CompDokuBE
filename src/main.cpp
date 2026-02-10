@@ -73,8 +73,8 @@ int main(){
           }
       })
       .onclose([&](crow::websocket::connection& conn, const std::string& reason, uint16_t) {
-          CROW_LOG_INFO << "websocket connection closed: " << reason;
           std::lock_guard<std::mutex> _(mtx);
+          CROW_LOG_INFO << "websocket connection closed: " << reason;
 
           // Remove Connection If in Queue
           CROW_LOG_INFO << "Remove Connection From Queue" << conn.get_remote_ip();
