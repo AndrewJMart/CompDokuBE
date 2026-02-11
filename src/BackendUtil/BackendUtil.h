@@ -22,5 +22,3 @@ void handleMove(crow::websocket::connection* player,
 void handleSolved(crow::websocket::connection* player,
                   std::unordered_map<crow::websocket::connection*, std::string>& playerToMatch,
                   std::unordered_map<std::string, Match*>& uniqueIDToMatch);
-
-void handlePing(crow::websocket::connection* player);

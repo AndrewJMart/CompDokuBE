@@ -122,13 +122,3 @@ void handleSolved(crow::websocket::connection* player,
     solvedJSON["winner"] = "no";
     loserConn->send_text(solvedJSON.dump());
 }
-
-void handlePing(crow::websocket::connection* player) {
-    
-    crow::json::wvalue pongJSON;
-    pongJSON["type"] = "Pong";
-
-    player->send_text(pongJSON.dump());
-
-    return;
-}

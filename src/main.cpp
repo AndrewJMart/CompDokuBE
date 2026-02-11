@@ -28,6 +28,27 @@ int main() {
 
     int matchIDCounter = 0;
 
+    std::thread([&uniqueIDToMatch, &mtx]() {
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::seconds(15));
+            
+            std::lock_guard<std::mutex> _(mtx);
+            
+            crow::json::wvalue pingJSON;
+            pingJSON["type"] = "SERVER_PING";
+            std::string pingMsg = pingJSON.dump();
+            
+            for (auto& [matchID, match] : uniqueIDToMatch) {
+            try {
+                match->p1->send_text(pingMsg);
+                match->p2->send_text(pingMsg);
+            } catch (...) {
+                CROW_LOG_ERROR << "Failed to send ping";
+            }
+            }
+        }
+    }).detach();
+
     CROW_WEBSOCKET_ROUTE(app, "/ws/compete")
     .onopen([&](crow::websocket::connection& conn) {
         std::lock_guard<std::mutex> _(mtx);
@@ -64,8 +85,8 @@ int main() {
     .onclose([&](crow::websocket::connection& conn, const std::string& reason, uint16_t code) {
         std::lock_guard<std::mutex> _(mtx);
 
-        CROW_LOG_INFO << "Websocket connection closed from " << conn.get_remote_ip() 
-                      << " - Reason: " << reason << " - Code: " << code;
+        CROW_LOG_INFO << "Websocket connection closed from - Reason: " 
+        << reason << " - Code: " << code;
 
         removeConnection(playerQueue, &conn);
 
@@ -78,8 +99,8 @@ int main() {
         if (!messageJSON) return;
 
         std::string messageType = messageJSON["type"].s();
-        if (messageType == "PING") {
-            handlePing(&conn);
+        if (messageType == "PONG") {
+            return;
         } else if (messageType == "MOVE") {
             handleMove(&conn, messageJSON, playerToMatch, uniqueIDToMatch);
         } else if (messageType == "SOLVED") {
