@@ -78,8 +78,9 @@ int main() {
         if (!messageJSON) return;
 
         std::string messageType = messageJSON["type"].s();
-        
-        if (messageType == "MOVE") {
+        if (messageType == "PING") {
+            handlePing(&conn);
+        } else if (messageType == "MOVE") {
             handleMove(&conn, messageJSON, playerToMatch, uniqueIDToMatch);
         } else if (messageType == "SOLVED") {
             handleSolved(&conn, playerToMatch, uniqueIDToMatch);
